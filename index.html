@@ -1,0 +1,732 @@
+<title>Rehearsal Marks</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rehearsal Marks">
+<meta name="theme-color" content="#191726">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f5f8;
+    --surface: #ffffff;
+    --surface-2: #eceaf2;
+    --surface-3: #e2dfec;
+    --ink: #201d2b;
+    --ink-soft: #5c5870;
+    --ink-faint: #8b869c;
+    --border: #dedbe6;
+    --accent: #b9822f;
+    --accent-ink: #7a5a22;
+    --accent-soft: #f1e3cb;
+    --good: #3f7a5c;
+    --good-soft: #dcece3;
+    --shadow: 0 1px 2px rgba(32,29,43,0.04), 0 8px 24px -12px rgba(32,29,43,0.18);
+    --focus: #7a5a22;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17151f;
+      --surface: #201d2c;
+      --surface-2: #292539;
+      --surface-3: #322d45;
+      --ink: #f1eff7;
+      --ink-soft: #b7b2c9;
+      --ink-faint: #837da0;
+      --border: #383350;
+      --accent: #e3a94a;
+      --accent-ink: #eec27c;
+      --accent-soft: #3a2f22;
+      --good: #7fbf9b;
+      --good-soft: #23342c;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+      --focus: #eec27c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17151f;
+    --surface: #201d2c;
+    --surface-2: #292539;
+    --surface-3: #322d45;
+    --ink: #f1eff7;
+    --ink-soft: #b7b2c9;
+    --ink-faint: #837da0;
+    --border: #383350;
+    --accent: #e3a94a;
+    --accent-ink: #eec27c;
+    --accent-soft: #3a2f22;
+    --good: #7fbf9b;
+    --good-soft: #23342c;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    --focus: #eec27c;
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Karla", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 108px;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px 24px;
+  }
+  header.page {
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(28px, 5vw, 38px);
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  .meta-line {
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+  .meta-line .dot { margin: 0 8px; opacity: 0.6; }
+  .note {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .note strong { color: var(--ink); }
+  .kbd {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--ink);
+  }
+
+  .groups { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+
+  .group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .group-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 14px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .group-head:hover { background: var(--surface-2); }
+  .group-num {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    width: 22px;
+    flex: none;
+    text-align: right;
+  }
+  .group-title-wrap { flex: 1; min-width: 0; }
+  .title-line { display: flex; align-items: center; gap: 6px; }
+  .group-title-display {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--ink);
+    padding: 2px 4px;
+    border-radius: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .group-title-input {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 17px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    flex: 1;
+    min-width: 0;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .group-title-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  .title-edit-btn {
+    flex: none;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--ink-faint);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+  }
+  .group-head:hover .title-edit-btn, .title-edit-btn:focus-visible { opacity: 1; }
+  .title-edit-btn:hover { background: var(--surface-3); color: var(--ink); }
+  .title-edit-btn svg { width: 13px; height: 13px; }
+  .group-sub {
+    font-size: 12px;
+    color: var(--ink-faint);
+    padding: 0 4px;
+    margin-top: 1px;
+  }
+  .group-play {
+    flex: none;
+    width: 34px; height: 34px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .group-play:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .group-play svg { width: 14px; height: 14px; }
+  .chevron {
+    flex: none;
+    width: 18px; height: 18px;
+    color: var(--ink-faint);
+    transition: transform 0.15s ease;
+  }
+  @media (prefers-reduced-motion: reduce) { .chevron { transition: none; } }
+  .group.open .chevron { transform: rotate(90deg); }
+
+  .parts {
+    display: none;
+    border-top: 1px solid var(--border);
+  }
+  .group.open .parts { display: block; }
+  .part-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 14px 9px 46px;
+    cursor: pointer;
+    border-top: 1px solid var(--border);
+  }
+  .part-row:first-child { border-top: none; }
+  .part-row:hover { background: var(--surface-2); }
+  .part-row.active { background: var(--accent-soft); }
+  .part-check {
+    flex: none;
+    width: 16px; height: 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .part-check svg { width: 10px; height: 10px; opacity: 0; }
+  .part-row.played .part-check { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .part-row.played .part-check svg { opacity: 1; }
+  .part-label { flex: 1; font-size: 14px; color: var(--ink); }
+  .part-row.active .part-label { color: var(--accent-ink); font-weight: 600; }
+  .part-time {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .part-mini-play {
+    flex: none;
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .part-row:hover .part-mini-play { color: var(--ink); }
+  .part-mini-play svg { width: 12px; height: 12px; }
+
+  /* Sticky player */
+  .player {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+    z-index: 10;
+  }
+  .player-inner { max-width: 720px; margin: 0 auto; }
+  .player-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .player-title {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .player-part {
+    font-size: 12px;
+    color: var(--ink-faint);
+    flex: none;
+  }
+  .seek-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .time {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    flex: none;
+    width: 38px;
+  }
+  .time.end { text-align: right; }
+  input[type="range"].seek {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct, 0%), var(--surface-3) var(--pct, 0%), var(--surface-3) 100%);
+    outline: none;
+  }
+  input[type="range"].seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 999px;
+    background: var(--accent);
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+    cursor: pointer;
+    margin-top: -5px;
+  }
+  input[type="range"].seek::-moz-range-thumb {
+    width: 14px; height: 14px;
+    border-radius: 999px;
+    background: var(--accent);
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+    cursor: pointer;
+  }
+  input[type="range"].seek:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+  .transport {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tbtn {
+    flex: none;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  .tbtn:hover { background: var(--surface-2); }
+  .tbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .tbtn[disabled] { opacity: 0.3; cursor: default; }
+  .tbtn[disabled]:hover { background: transparent; }
+  .tbtn.skip { width: 40px; height: 40px; }
+  .tbtn.skip svg { width: 19px; height: 19px; }
+  .tbtn.nudge { width: 40px; height: 40px; }
+  .tbtn.nudge svg { width: 20px; height: 20px; }
+  .tbtn.play {
+    width: 52px; height: 52px;
+    background: var(--accent);
+    color: var(--surface);
+  }
+  .tbtn.play:hover { background: var(--accent-ink); }
+  .tbtn.play svg { width: 22px; height: 22px; }
+  .spacer-left, .spacer-right { flex: 1; display: flex; }
+  .spacer-right { justify-content: flex-end; }
+  .auto-toggle {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 8px 4px 4px;
+    border-radius: 999px;
+  }
+  .auto-toggle:hover { background: var(--surface-2); }
+  .switch {
+    width: 26px; height: 15px;
+    border-radius: 999px;
+    background: var(--surface-3);
+    position: relative;
+    flex: none;
+    transition: background 0.15s ease;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 11px; height: 11px;
+    border-radius: 999px;
+    background: var(--surface);
+    transition: transform 0.15s ease;
+  }
+  @media (prefers-reduced-motion: reduce) { .switch, .switch::after { transition: none; } }
+  .auto-toggle.on .switch { background: var(--accent); }
+  .auto-toggle.on .switch::after { transform: translateX(11px); }
+
+  footer.credits {
+    max-width: 720px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 420px) {
+    .part-row { padding-left: 38px; }
+    .tbtn.skip { width: 36px; height: 36px; }
+    .tbtn.nudge { width: 36px; height: 36px; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="page">
+    <h1>Rehearsal Marks</h1>
+    <p class="meta-line" id="metaLine"></p>
+    <p class="note">
+      <strong>Titles are auto-guessed.</strong> There's no speech-to-text service reachable from this sandbox, so section names come from a rough offline transcript and may be off &mdash; click any title to fix it. Your edits and listened-state are saved in this browser.
+      <br><br>
+      <span class="kbd">Space</span> play/pause &nbsp;
+      <span class="kbd">&larr;</span>/<span class="kbd">&rarr;</span> seek 10s &nbsp;
+      <span class="kbd">[</span>/<span class="kbd">]</span> prev/next part
+      <span id="installTip"><br><br><strong>Add it to your home screen</strong> for the full app feel &mdash; no browser bar, just this player. iPhone: Share button &rarr; Add to Home Screen. Android Chrome: menu (&#8942;) &rarr; Install app / Add to Home screen.</span>
+    </p>
+  </header>
+
+  <div class="groups" id="groups"></div>
+
+  <footer class="credits">Brian_Platt_Recap_8.14.26.m4a &middot; split into 21 parts across 10 sections</footer>
+</div>
+
+<div class="player">
+  <div class="player-inner">
+    <div class="player-title-row">
+      <div class="player-title" id="nowTitle">&mdash;</div>
+      <div class="player-part" id="nowPart"></div>
+    </div>
+    <div class="seek-row">
+      <span class="time" id="timeElapsed">0:00</span>
+      <input type="range" class="seek" id="seek" min="0" max="1000" value="0" step="1" aria-label="Seek within current part">
+      <span class="time end" id="timeTotal">0:00</span>
+    </div>
+    <div class="transport">
+      <div class="spacer-left">
+        <label class="auto-toggle" id="autoToggle">
+          <span class="switch"></span> Auto-advance
+        </label>
+      </div>
+      <button class="tbtn skip" id="btnPrev" aria-label="Previous part" title="Previous part">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12l9-6.5v13z" transform="scale(-1,1) translate(-24,0)"/></svg>
+      </button>
+      <button class="tbtn nudge" id="btnRew" aria-label="Rewind 10 seconds" title="Rewind 10s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><text x="12" y="15.5" font-family="Space Mono, monospace" font-size="7.5" fill="currentColor" stroke="none" text-anchor="middle">10</text></svg>
+      </button>
+      <button class="tbtn play" id="btnPlay" aria-label="Play" title="Play/Pause">
+        <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+      </button>
+      <button class="tbtn nudge" id="btnFwd" aria-label="Forward 10 seconds" title="Forward 10s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/><text x="12" y="15.5" font-family="Space Mono, monospace" font-size="7.5" fill="currentColor" stroke="none" text-anchor="middle">10</text></svg>
+      </button>
+      <button class="tbtn skip" id="btnNext" aria-label="Next part" title="Next part">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12l9-6.5v13z"/></svg>
+      </button>
+      <div class="spacer-right"></div>
+    </div>
+  </div>
+</div>
+
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+const GROUPS = [{"id": "g1", "defaultTitle": "Breathing & Vocal Warm-Up", "chunks": [{"file": "chunk_01.mp3", "duration": 27.03, "start": 0.0, "end": 27.03, "src": "audio/chunk_01.mp3"}, {"file": "chunk_02.mp3", "duration": 24.62, "start": 27.03, "end": 51.65, "src": "audio/chunk_02.mp3"}, {"file": "chunk_03.mp3", "duration": 24.45, "start": 51.65, "end": 76.1, "src": "audio/chunk_03.mp3"}, {"file": "chunk_04.mp3", "duration": 24.52, "start": 76.1, "end": 100.62, "src": "audio/chunk_04.mp3"}]}, {"id": "g5", "defaultTitle": "Vocal Technique Work", "chunks": [{"file": "chunk_05.mp3", "duration": 95.16, "start": 100.62, "end": 195.78, "src": "audio/chunk_05.mp3"}, {"file": "chunk_06.mp3", "duration": 28.51, "start": 195.78, "end": 224.29, "src": "audio/chunk_06.mp3"}, {"file": "chunk_07.mp3", "duration": 32.58, "start": 224.29, "end": 256.87, "src": "audio/chunk_07.mp3"}]}, {"id": "g8", "defaultTitle": "Vocal Cord Compression", "chunks": [{"file": "chunk_08.mp3", "duration": 31.59, "start": 256.87, "end": 288.46, "src": "audio/chunk_08.mp3"}]}, {"id": "g9", "defaultTitle": "Finger Placement Cue", "chunks": [{"file": "chunk_09.mp3", "duration": 26.85, "start": 288.46, "end": 315.31, "src": "audio/chunk_09.mp3"}, {"file": "chunk_10.mp3", "duration": 27.11, "start": 315.31, "end": 342.42, "src": "audio/chunk_10.mp3"}, {"file": "chunk_11.mp3", "duration": 35.34, "start": 342.42, "end": 377.76, "src": "audio/chunk_11.mp3"}]}, {"id": "g12", "defaultTitle": "Transition / Review", "chunks": [{"file": "chunk_12.mp3", "duration": 28.98, "start": 377.76, "end": 406.74, "src": "audio/chunk_12.mp3"}]}, {"id": "g13", "defaultTitle": "Open Placement Discussion", "chunks": [{"file": "chunk_13.mp3", "duration": 29.65, "start": 406.74, "end": 436.39, "src": "audio/chunk_13.mp3"}, {"file": "chunk_14.mp3", "duration": 27.14, "start": 436.39, "end": 463.53, "src": "audio/chunk_14.mp3"}]}, {"id": "g15", "defaultTitle": "Quack / Twang Resonance", "chunks": [{"file": "chunk_15.mp3", "duration": 25.78, "start": 463.53, "end": 489.31, "src": "audio/chunk_15.mp3"}, {"file": "chunk_16.mp3", "duration": 25.23, "start": 489.31, "end": 514.54, "src": "audio/chunk_16.mp3"}]}, {"id": "g17", "defaultTitle": "Repeated Pattern Exercise", "chunks": [{"file": "chunk_17.mp3", "duration": 27.7, "start": 514.54, "end": 542.24, "src": "audio/chunk_17.mp3"}, {"file": "chunk_18.mp3", "duration": 25.79, "start": 542.24, "end": 568.03, "src": "audio/chunk_18.mp3"}]}, {"id": "g19", "defaultTitle": "Wrap-Up: Number Count Recap", "chunks": [{"file": "chunk_19.mp3", "duration": 24.74, "start": 568.03, "end": 592.77, "src": "audio/chunk_19.mp3"}, {"file": "chunk_20.mp3", "duration": 25.57, "start": 592.77, "end": 618.34, "src": "audio/chunk_20.mp3"}]}, {"id": "g21", "defaultTitle": "Closing / Sign-Off", "chunks": [{"file": "chunk_21.mp3", "duration": 30.43, "start": 618.34, "end": 648.77, "src": "audio/chunk_21.mp3"}]}];
+
+const STORAGE_KEY = "rehearsal-marks-v1";
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { titles: {}, played: {}, autoAdvance: true };
+    const parsed = JSON.parse(raw);
+    return {
+      titles: parsed.titles || {},
+      played: parsed.played || {},
+      autoAdvance: parsed.autoAdvance !== false,
+    };
+  } catch (e) { return { titles: {}, played: {}, autoAdvance: true }; }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+const state = loadState();
+
+// Flatten for prev/next + lookup
+const flatParts = [];
+GROUPS.forEach((g, gi) => {
+  g.chunks.forEach((c, pi) => flatParts.push({ groupIndex: gi, partIndex: pi, chunk: c }));
+});
+
+let currentFlat = 0;
+const audio = document.getElementById("audio");
+
+function fmtTime(s) {
+  if (!isFinite(s) || s < 0) s = 0;
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ":" + String(sec).padStart(2, "0");
+}
+
+function groupTitle(gi) {
+  const g = GROUPS[gi];
+  return state.titles[g.id] || g.defaultTitle;
+}
+
+function buildList() {
+  const container = document.getElementById("groups");
+  container.innerHTML = "";
+  GROUPS.forEach((g, gi) => {
+    const totalDur = g.chunks.reduce((a, c) => a + c.duration, 0);
+    const el = document.createElement("div");
+    el.className = "group";
+    el.dataset.gi = gi;
+
+    const head = document.createElement("div");
+    head.className = "group-head";
+    const escTitle = groupTitle(gi).replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    head.innerHTML = `
+      <span class="group-num">${String(gi + 1).padStart(2, "0")}</span>
+      <div class="group-title-wrap">
+        <div class="title-line">
+          <span class="group-title-display" data-gi="${gi}">${escTitle}</span>
+          <input class="group-title-input" data-gi="${gi}" value="${escTitle}" aria-label="Section title" style="display:none" />
+          <button class="title-edit-btn" data-gi="${gi}" aria-label="Rename section" title="Rename section">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+        </div>
+        <div class="group-sub">${g.chunks.length} part${g.chunks.length > 1 ? "s" : ""} &middot; ${fmtTime(totalDur)}</div>
+      </div>
+      <button class="group-play" data-gi="${gi}" aria-label="Play section" title="Play section">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    `;
+    el.appendChild(head);
+
+    const parts = document.createElement("div");
+    parts.className = "parts";
+    g.chunks.forEach((c, pi) => {
+      const flatIdx = flatParts.findIndex(f => f.chunk === c);
+      const row = document.createElement("div");
+      row.className = "part-row";
+      row.dataset.flat = flatIdx;
+      const label = g.chunks.length > 1 ? `Part ${pi + 1}` : "Full section";
+      row.innerHTML = `
+        <span class="part-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span class="part-label">${label}</span>
+        <span class="part-time">${fmtTime(c.duration)}</span>
+        <button class="part-mini-play" aria-label="Play ${label}" title="Play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      `;
+      if (state.played[c.file]) row.classList.add("played");
+      row.addEventListener("click", () => loadAndPlay(flatIdx));
+      parts.appendChild(row);
+    });
+    el.appendChild(parts);
+
+    head.addEventListener("click", (e) => {
+      if (e.target.closest(".title-edit-btn") || e.target.closest(".group-title-input") || e.target.closest(".group-play")) return;
+      el.classList.toggle("open");
+    });
+    head.querySelector(".group-play").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const flatIdx = flatParts.findIndex(f => f.groupIndex === gi);
+      el.classList.add("open");
+      loadAndPlay(flatIdx);
+    });
+
+    const titleDisplay = head.querySelector(".group-title-display");
+    const titleInput = head.querySelector(".group-title-input");
+    const editBtn = head.querySelector(".title-edit-btn");
+
+    function enterEdit(e) {
+      e.stopPropagation();
+      titleDisplay.style.display = "none";
+      titleInput.style.display = "";
+      titleInput.value = groupTitle(gi);
+      titleInput.focus();
+      titleInput.select();
+    }
+    function commitEdit() {
+      const val = titleInput.value.trim() || g.defaultTitle;
+      state.titles[g.id] = val;
+      saveState();
+      titleDisplay.textContent = val;
+      titleDisplay.style.display = "";
+      titleInput.style.display = "none";
+      refreshNowPlaying();
+    }
+    editBtn.addEventListener("click", enterEdit);
+    titleInput.addEventListener("click", (e) => e.stopPropagation());
+    titleInput.addEventListener("blur", commitEdit);
+    titleInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); titleInput.blur(); }
+      else if (e.key === "Escape") { titleInput.value = groupTitle(gi); titleInput.blur(); }
+    });
+
+    container.appendChild(el);
+  });
+}
+
+function setActiveRow() {
+  document.querySelectorAll(".part-row").forEach(r => r.classList.remove("active"));
+  const row = document.querySelector(`.part-row[data-flat="${currentFlat}"]`);
+  if (row) {
+    row.classList.add("active");
+    const group = row.closest(".group");
+    if (group) group.classList.add("open");
+  }
+}
+
+function markPlayed(file) {
+  state.played[file] = true;
+  saveState();
+  const f = flatParts.find(f => f.chunk.file === file);
+  if (!f) return;
+  const flatIdx = flatParts.indexOf(f);
+  const row = document.querySelector(`.part-row[data-flat="${flatIdx}"]`);
+  if (row) row.classList.add("played");
+}
+
+function refreshNowPlaying() {
+  const f = flatParts[currentFlat];
+  const gi = f.groupIndex;
+  document.getElementById("nowTitle").textContent = groupTitle(gi);
+  const label = GROUPS[gi].chunks.length > 1 ? `Part ${f.partIndex + 1} of ${GROUPS[gi].chunks.length}` : "";
+  document.getElementById("nowPart").textContent = label;
+}
+
+function loadAndPlay(flatIdx, autoplay = true) {
+  if (flatIdx < 0 || flatIdx >= flatParts.length) return;
+  currentFlat = flatIdx;
+  const c = flatParts[flatIdx].chunk;
+  audio.src = c.src;
+  audio.currentTime = 0;
+  refreshNowPlaying();
+  setActiveRow();
+  document.getElementById("btnPrev").disabled = flatIdx === 0;
+  document.getElementById("btnNext").disabled = flatIdx === flatParts.length - 1;
+  if (autoplay) audio.play().catch(() => {});
+}
+
+document.getElementById("btnPlay").addEventListener("click", () => {
+  if (!audio.src) { loadAndPlay(0); return; }
+  if (audio.paused) audio.play().catch(() => {}); else audio.pause();
+});
+document.getElementById("btnRew").addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
+document.getElementById("btnFwd").addEventListener("click", () => { audio.currentTime = Math.min(audio.duration || 1e9, audio.currentTime + 10); });
+document.getElementById("btnPrev").addEventListener("click", () => loadAndPlay(currentFlat - 1));
+document.getElementById("btnNext").addEventListener("click", () => loadAndPlay(currentFlat + 1));
+
+const autoToggle = document.getElementById("autoToggle");
+function renderAutoToggle() { autoToggle.classList.toggle("on", !!state.autoAdvance); }
+autoToggle.addEventListener("click", () => { state.autoAdvance = !state.autoAdvance; saveState(); renderAutoToggle(); });
+
+audio.addEventListener("play", () => {
+  document.getElementById("iconPlay").style.display = "none";
+  document.getElementById("iconPause").style.display = "";
+  document.getElementById("btnPlay").setAttribute("aria-label", "Pause");
+});
+audio.addEventListener("pause", () => {
+  document.getElementById("iconPlay").style.display = "";
+  document.getElementById("iconPause").style.display = "none";
+  document.getElementById("btnPlay").setAttribute("aria-label", "Play");
+});
+audio.addEventListener("loadedmetadata", () => {
+  document.getElementById("timeTotal").textContent = fmtTime(audio.duration);
+});
+audio.addEventListener("timeupdate", () => {
+  const dur = audio.duration || flatParts[currentFlat].chunk.duration || 1;
+  const pct = Math.min(100, (audio.currentTime / dur) * 100);
+  const seek = document.getElementById("seek");
+  seek.value = Math.round(pct * 10);
+  seek.style.setProperty("--pct", pct + "%");
+  document.getElementById("timeElapsed").textContent = fmtTime(audio.currentTime);
+});
+audio.addEventListener("ended", () => {
+  markPlayed(flatParts[currentFlat].chunk.file);
+  if (state.autoAdvance && currentFlat < flatParts.length - 1) {
+    loadAndPlay(currentFlat + 1);
+  }
+});
+
+const seek = document.getElementById("seek");
+seek.addEventListener("input", () => {
+  const dur = audio.duration || flatParts[currentFlat].chunk.duration || 1;
+  audio.currentTime = (seek.value / 1000) * dur;
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT") return;
+  if (e.code === "Space") { e.preventDefault(); document.getElementById("btnPlay").click(); }
+  else if (e.key === "ArrowLeft") { audio.currentTime = Math.max(0, audio.currentTime - 10); }
+  else if (e.key === "ArrowRight") { audio.currentTime = Math.min(audio.duration || 1e9, audio.currentTime + 10); }
+  else if (e.key === "[") { loadAndPlay(currentFlat - 1); }
+  else if (e.key === "]") { loadAndPlay(currentFlat + 1); }
+});
+
+function totalDuration() {
+  return flatParts.reduce((a, f) => a + f.chunk.duration, 0);
+}
+document.getElementById("metaLine").innerHTML =
+  `Brian Platt &middot; recap of 8/14/26 lesson${'<span class="dot">&bull;</span>'}${fmtTime(totalDuration())} total`;
+
+buildList();
+renderAutoToggle();
+refreshNowPlaying();
+document.getElementById("btnPrev").disabled = true;
+document.getElementById("btnNext").disabled = flatParts.length <= 1;
+
+if (window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches) {
+  const tip = document.getElementById("installTip");
+  if (tip) tip.style.display = "none";
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });
+}
+
+</script>
