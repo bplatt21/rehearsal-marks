@@ -122,6 +122,25 @@
 
   .groups { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
 
+  .session-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 2px;
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .session-divider:first-child { margin-top: 0; }
+  .session-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
   .group {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -429,7 +448,7 @@
 
   <div class="groups" id="groups"></div>
 
-  <footer class="credits">Brian_Platt_Recap_8.14.26.m4a &middot; split into 21 parts across 10 sections</footer>
+  <footer class="credits" id="credits"></footer>
 </div>
 
 <div class="player">
@@ -473,7 +492,7 @@
 <audio id="audio" preload="metadata"></audio>
 
 <script>
-const GROUPS = [{"id": "g1", "defaultTitle": "Breathing & Vocal Warm-Up", "chunks": [{"file": "chunk_01.mp3", "duration": 27.03, "start": 0.0, "end": 27.03, "src": "audio/chunk_01.mp3"}, {"file": "chunk_02.mp3", "duration": 24.62, "start": 27.03, "end": 51.65, "src": "audio/chunk_02.mp3"}, {"file": "chunk_03.mp3", "duration": 24.45, "start": 51.65, "end": 76.1, "src": "audio/chunk_03.mp3"}, {"file": "chunk_04.mp3", "duration": 24.52, "start": 76.1, "end": 100.62, "src": "audio/chunk_04.mp3"}]}, {"id": "g5", "defaultTitle": "Vocal Technique Work", "chunks": [{"file": "chunk_05.mp3", "duration": 95.16, "start": 100.62, "end": 195.78, "src": "audio/chunk_05.mp3"}, {"file": "chunk_06.mp3", "duration": 28.51, "start": 195.78, "end": 224.29, "src": "audio/chunk_06.mp3"}, {"file": "chunk_07.mp3", "duration": 32.58, "start": 224.29, "end": 256.87, "src": "audio/chunk_07.mp3"}]}, {"id": "g8", "defaultTitle": "Vocal Cord Compression", "chunks": [{"file": "chunk_08.mp3", "duration": 31.59, "start": 256.87, "end": 288.46, "src": "audio/chunk_08.mp3"}]}, {"id": "g9", "defaultTitle": "Finger Placement Cue", "chunks": [{"file": "chunk_09.mp3", "duration": 26.85, "start": 288.46, "end": 315.31, "src": "audio/chunk_09.mp3"}, {"file": "chunk_10.mp3", "duration": 27.11, "start": 315.31, "end": 342.42, "src": "audio/chunk_10.mp3"}, {"file": "chunk_11.mp3", "duration": 35.34, "start": 342.42, "end": 377.76, "src": "audio/chunk_11.mp3"}]}, {"id": "g12", "defaultTitle": "Transition / Review", "chunks": [{"file": "chunk_12.mp3", "duration": 28.98, "start": 377.76, "end": 406.74, "src": "audio/chunk_12.mp3"}]}, {"id": "g13", "defaultTitle": "Open Placement Discussion", "chunks": [{"file": "chunk_13.mp3", "duration": 29.65, "start": 406.74, "end": 436.39, "src": "audio/chunk_13.mp3"}, {"file": "chunk_14.mp3", "duration": 27.14, "start": 436.39, "end": 463.53, "src": "audio/chunk_14.mp3"}]}, {"id": "g15", "defaultTitle": "Quack / Twang Resonance", "chunks": [{"file": "chunk_15.mp3", "duration": 25.78, "start": 463.53, "end": 489.31, "src": "audio/chunk_15.mp3"}, {"file": "chunk_16.mp3", "duration": 25.23, "start": 489.31, "end": 514.54, "src": "audio/chunk_16.mp3"}]}, {"id": "g17", "defaultTitle": "Repeated Pattern Exercise", "chunks": [{"file": "chunk_17.mp3", "duration": 27.7, "start": 514.54, "end": 542.24, "src": "audio/chunk_17.mp3"}, {"file": "chunk_18.mp3", "duration": 25.79, "start": 542.24, "end": 568.03, "src": "audio/chunk_18.mp3"}]}, {"id": "g19", "defaultTitle": "Wrap-Up: Number Count Recap", "chunks": [{"file": "chunk_19.mp3", "duration": 24.74, "start": 568.03, "end": 592.77, "src": "audio/chunk_19.mp3"}, {"file": "chunk_20.mp3", "duration": 25.57, "start": 592.77, "end": 618.34, "src": "audio/chunk_20.mp3"}]}, {"id": "g21", "defaultTitle": "Closing / Sign-Off", "chunks": [{"file": "chunk_21.mp3", "duration": 30.43, "start": 618.34, "end": 648.77, "src": "audio/chunk_21.mp3"}]}];
+const GROUPS = [{"id": "g1", "defaultTitle": "Breathing & Vocal Warm-Up", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_01.mp3", "duration": 27.03, "start": 0.0, "end": 27.03, "src": "audio/chunk_01.mp3"}, {"file": "chunk_02.mp3", "duration": 24.62, "start": 27.03, "end": 51.65, "src": "audio/chunk_02.mp3"}, {"file": "chunk_03.mp3", "duration": 24.45, "start": 51.65, "end": 76.1, "src": "audio/chunk_03.mp3"}, {"file": "chunk_04.mp3", "duration": 24.52, "start": 76.1, "end": 100.62, "src": "audio/chunk_04.mp3"}]}, {"id": "g5", "defaultTitle": "Vocal Technique Work", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_05.mp3", "duration": 95.16, "start": 100.62, "end": 195.78, "src": "audio/chunk_05.mp3"}, {"file": "chunk_06.mp3", "duration": 28.51, "start": 195.78, "end": 224.29, "src": "audio/chunk_06.mp3"}, {"file": "chunk_07.mp3", "duration": 32.58, "start": 224.29, "end": 256.87, "src": "audio/chunk_07.mp3"}]}, {"id": "g8", "defaultTitle": "Vocal Cord Compression", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_08.mp3", "duration": 31.59, "start": 256.87, "end": 288.46, "src": "audio/chunk_08.mp3"}]}, {"id": "g9", "defaultTitle": "Finger Placement Cue", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_09.mp3", "duration": 26.85, "start": 288.46, "end": 315.31, "src": "audio/chunk_09.mp3"}, {"file": "chunk_10.mp3", "duration": 27.11, "start": 315.31, "end": 342.42, "src": "audio/chunk_10.mp3"}, {"file": "chunk_11.mp3", "duration": 35.34, "start": 342.42, "end": 377.76, "src": "audio/chunk_11.mp3"}]}, {"id": "g12", "defaultTitle": "Transition / Review", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_12.mp3", "duration": 28.98, "start": 377.76, "end": 406.74, "src": "audio/chunk_12.mp3"}]}, {"id": "g13", "defaultTitle": "Open Placement Discussion", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_13.mp3", "duration": 29.65, "start": 406.74, "end": 436.39, "src": "audio/chunk_13.mp3"}, {"file": "chunk_14.mp3", "duration": 27.14, "start": 436.39, "end": 463.53, "src": "audio/chunk_14.mp3"}]}, {"id": "g15", "defaultTitle": "Quack / Twang Resonance", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_15.mp3", "duration": 25.78, "start": 463.53, "end": 489.31, "src": "audio/chunk_15.mp3"}, {"file": "chunk_16.mp3", "duration": 25.23, "start": 489.31, "end": 514.54, "src": "audio/chunk_16.mp3"}]}, {"id": "g17", "defaultTitle": "Repeated Pattern Exercise", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_17.mp3", "duration": 27.7, "start": 514.54, "end": 542.24, "src": "audio/chunk_17.mp3"}, {"file": "chunk_18.mp3", "duration": 25.79, "start": 542.24, "end": 568.03, "src": "audio/chunk_18.mp3"}]}, {"id": "g19", "defaultTitle": "Wrap-Up: Number Count Recap", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_19.mp3", "duration": 24.74, "start": 568.03, "end": 592.77, "src": "audio/chunk_19.mp3"}, {"file": "chunk_20.mp3", "duration": 25.57, "start": 592.77, "end": 618.34, "src": "audio/chunk_20.mp3"}]}, {"id": "g21", "defaultTitle": "Closing / Sign-Off", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_21.mp3", "duration": 30.43, "start": 618.34, "end": 648.77, "src": "audio/chunk_21.mp3"}]}, {"id": "g22", "defaultTitle": "Follow-Up: Spot-Check & Technique Notes", "session": "Follow-Up \u00b7 8/23/26", "chunks": [{"file": "chunk_22.mp3", "duration": 147.67, "start": 0.0, "end": 147.67, "src": "audio/chunk_22.mp3"}]}];
 
 const STORAGE_KEY = "rehearsal-marks-v1";
 function loadState() {
@@ -517,7 +536,16 @@ function groupTitle(gi) {
 function buildList() {
   const container = document.getElementById("groups");
   container.innerHTML = "";
+  let lastSession = null;
   GROUPS.forEach((g, gi) => {
+    if (g.session !== lastSession) {
+      lastSession = g.session;
+      const divider = document.createElement("div");
+      divider.className = "session-divider";
+      divider.textContent = g.session;
+      container.appendChild(divider);
+    }
+
     const totalDur = g.chunks.reduce((a, c) => a + c.duration, 0);
     const el = document.createElement("div");
     el.className = "group";
@@ -711,8 +739,11 @@ document.addEventListener("keydown", (e) => {
 function totalDuration() {
   return flatParts.reduce((a, f) => a + f.chunk.duration, 0);
 }
+const sessionCount = new Set(GROUPS.map(g => g.session)).size;
 document.getElementById("metaLine").innerHTML =
-  `Brian Platt &middot; recap of 8/14/26 lesson${'<span class="dot">&bull;</span>'}${fmtTime(totalDuration())} total`;
+  `Brian Platt &middot; ${sessionCount} session${sessionCount > 1 ? "s" : ""}${'<span class="dot">&bull;</span>'}${fmtTime(totalDuration())} total`;
+document.getElementById("credits").textContent =
+  `${flatParts.length} parts across ${GROUPS.length} sections`;
 
 buildList();
 renderAutoToggle();
