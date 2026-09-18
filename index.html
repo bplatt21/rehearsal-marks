@@ -430,6 +430,50 @@
     .tbtn.skip { width: 36px; height: 36px; }
     .tbtn.nudge { width: 36px; height: 36px; }
   }
+
+  .video-panel {
+    display: none;
+    max-width: 720px;
+    margin: 0 auto 10px;
+  }
+  .video-panel.active { display: block; }
+  .video-panel video {
+    width: 100%;
+    max-height: 240px;
+    border-radius: 10px;
+    background: #000;
+    display: block;
+    object-fit: contain;
+  }
+  .video-unavailable {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-family: "Karla", sans-serif;
+  }
+  .video-panel.unavailable video { display: none; }
+  .video-panel.unavailable .video-unavailable { display: flex; }
+  .video-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-family: "Space Mono", ui-monospace, monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    flex: none;
+  }
 </style>
 
 <div class="wrap">
@@ -452,9 +496,17 @@
 </div>
 
 <div class="player">
+  <div id="videoPanel" class="video-panel">
+    <video id="video" preload="metadata" playsinline webkit-playsinline></video>
+    <div class="video-unavailable">Video not available in this environment</div>
+  </div>
   <div class="player-inner">
     <div class="player-title-row">
       <div class="player-title" id="nowTitle">&mdash;</div>
+      <span class="video-badge" id="videoBadge" style="display:none">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+        video
+      </span>
       <div class="player-part" id="nowPart"></div>
     </div>
     <div class="seek-row">
@@ -492,7 +544,13 @@
 <audio id="audio" preload="metadata"></audio>
 
 <script>
-const GROUPS = [{"id": "g1", "defaultTitle": "Breathing & Vocal Warm-Up", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_01.mp3", "duration": 27.03, "start": 0.0, "end": 27.03, "src": "audio/chunk_01.mp3"}, {"file": "chunk_02.mp3", "duration": 24.62, "start": 27.03, "end": 51.65, "src": "audio/chunk_02.mp3"}, {"file": "chunk_03.mp3", "duration": 24.45, "start": 51.65, "end": 76.1, "src": "audio/chunk_03.mp3"}, {"file": "chunk_04.mp3", "duration": 24.52, "start": 76.1, "end": 100.62, "src": "audio/chunk_04.mp3"}]}, {"id": "g5", "defaultTitle": "Vocal Technique Work", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_05.mp3", "duration": 95.16, "start": 100.62, "end": 195.78, "src": "audio/chunk_05.mp3"}, {"file": "chunk_06.mp3", "duration": 28.51, "start": 195.78, "end": 224.29, "src": "audio/chunk_06.mp3"}, {"file": "chunk_07.mp3", "duration": 32.58, "start": 224.29, "end": 256.87, "src": "audio/chunk_07.mp3"}]}, {"id": "g8", "defaultTitle": "Vocal Cord Compression", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_08.mp3", "duration": 31.59, "start": 256.87, "end": 288.46, "src": "audio/chunk_08.mp3"}]}, {"id": "g9", "defaultTitle": "Finger Placement Cue", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_09.mp3", "duration": 26.85, "start": 288.46, "end": 315.31, "src": "audio/chunk_09.mp3"}, {"file": "chunk_10.mp3", "duration": 27.11, "start": 315.31, "end": 342.42, "src": "audio/chunk_10.mp3"}, {"file": "chunk_11.mp3", "duration": 35.34, "start": 342.42, "end": 377.76, "src": "audio/chunk_11.mp3"}]}, {"id": "g12", "defaultTitle": "Transition / Review", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_12.mp3", "duration": 28.98, "start": 377.76, "end": 406.74, "src": "audio/chunk_12.mp3"}]}, {"id": "g13", "defaultTitle": "Open Placement Discussion", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_13.mp3", "duration": 29.65, "start": 406.74, "end": 436.39, "src": "audio/chunk_13.mp3"}, {"file": "chunk_14.mp3", "duration": 27.14, "start": 436.39, "end": 463.53, "src": "audio/chunk_14.mp3"}]}, {"id": "g15", "defaultTitle": "Quack / Twang Resonance", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_15.mp3", "duration": 25.78, "start": 463.53, "end": 489.31, "src": "audio/chunk_15.mp3"}, {"file": "chunk_16.mp3", "duration": 25.23, "start": 489.31, "end": 514.54, "src": "audio/chunk_16.mp3"}]}, {"id": "g17", "defaultTitle": "Repeated Pattern Exercise", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_17.mp3", "duration": 27.7, "start": 514.54, "end": 542.24, "src": "audio/chunk_17.mp3"}, {"file": "chunk_18.mp3", "duration": 25.79, "start": 542.24, "end": 568.03, "src": "audio/chunk_18.mp3"}]}, {"id": "g19", "defaultTitle": "Wrap-Up: Number Count Recap", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_19.mp3", "duration": 24.74, "start": 568.03, "end": 592.77, "src": "audio/chunk_19.mp3"}, {"file": "chunk_20.mp3", "duration": 25.57, "start": 592.77, "end": 618.34, "src": "audio/chunk_20.mp3"}]}, {"id": "g21", "defaultTitle": "Closing / Sign-Off", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_21.mp3", "duration": 30.43, "start": 618.34, "end": 648.77, "src": "audio/chunk_21.mp3"}]}, {"id": "g22", "defaultTitle": "Follow-Up: Spot-Check & Technique Notes", "session": "Follow-Up \u00b7 8/23/26", "chunks": [{"file": "chunk_22.mp3", "duration": 147.67, "start": 0.0, "end": 147.67, "src": "audio/chunk_22.mp3"}]},{"id":"g23","defaultTitle":"Live Slip Slip Exercise","session":"8/27/26 Lesson","chunks":[{"file":"chunk_23.mp3","duration":27.04,"start":0.0,"end":27.04,"src":"audio/chunk_23.mp3"},{"file":"chunk_24.mp3","duration":27.04,"start":27.04,"end":54.08,"src":"audio/chunk_24.mp3"},{"file":"chunk_25.mp3","duration":27.04,"start":54.08,"end":81.12,"src":"audio/chunk_25.mp3"}]},{"id":"g24","defaultTitle":"Hum Resonance & Anchor Note","session":"8/27/26 Lesson","chunks":[{"file":"chunk_26.mp3","duration":27.04,"start":81.12,"end":108.16,"src":"audio/chunk_26.mp3"},{"file":"chunk_27.mp3","duration":27.04,"start":108.16,"end":135.2,"src":"audio/chunk_27.mp3"},{"file":"chunk_28.mp3","duration":27.04,"start":135.2,"end":162.24,"src":"audio/chunk_28.mp3"},{"file":"chunk_29.mp3","duration":27.04,"start":162.24,"end":189.28,"src":"audio/chunk_29.mp3"}]},{"id":"g25","defaultTitle":"Thick vs. Thin Vocal Folds","session":"8/27/26 Lesson","chunks":[{"file":"chunk_30.mp3","duration":27.04,"start":189.28,"end":216.32,"src":"audio/chunk_30.mp3"},{"file":"chunk_31.mp3","duration":27.04,"start":216.32,"end":243.36,"src":"audio/chunk_31.mp3"},{"file":"chunk_32.mp3","duration":27.04,"start":243.36,"end":270.4,"src":"audio/chunk_32.mp3"}]},{"id":"g26","defaultTitle":"Fold Flexing: Hey Everybody","session":"8/27/26 Lesson","chunks":[{"file":"chunk_33.mp3","duration":27.04,"start":270.4,"end":297.44,"src":"audio/chunk_33.mp3"},{"file":"chunk_34.mp3","duration":27.04,"start":297.44,"end":324.48,"src":"audio/chunk_34.mp3"},{"file":"chunk_35.mp3","duration":27.04,"start":324.48,"end":351.52,"src":"audio/chunk_35.mp3"},{"file":"chunk_36.mp3","duration":27.04,"start":351.52,"end":378.56,"src":"audio/chunk_36.mp3"},{"file":"chunk_37.mp3","duration":27.04,"start":378.56,"end":405.6,"src":"audio/chunk_37.mp3"}]},{"id":"g27","defaultTitle":"Sugary: Finding the Song","session":"8/27/26 Lesson","chunks":[{"file":"chunk_38.mp3","duration":27.04,"start":405.6,"end":432.64,"src":"audio/chunk_38.mp3"},{"file":"chunk_39.mp3","duration":27.04,"start":432.64,"end":459.68,"src":"audio/chunk_39.mp3"},{"file":"chunk_40.mp3","duration":27.04,"start":459.68,"end":486.72,"src":"audio/chunk_40.mp3"},{"file":"chunk_41.mp3","duration":27.04,"start":486.72,"end":513.76,"src":"audio/chunk_41.mp3"},{"file":"chunk_42.mp3","duration":27.04,"start":513.76,"end":540.8,"src":"audio/chunk_42.mp3"}]},{"id":"g28","defaultTitle":"Sugary: First Attempt","session":"8/27/26 Lesson","chunks":[{"file":"chunk_43.mp3","duration":27.04,"start":540.8,"end":567.84,"src":"audio/chunk_43.mp3"},{"file":"chunk_44.mp3","duration":27.04,"start":567.84,"end":594.88,"src":"audio/chunk_44.mp3"},{"file":"chunk_45.mp3","duration":8.05,"start":594.88,"end":602.93,"src":"audio/chunk_45.mp3"}]},{"id":"g29","defaultTitle":"Sugary: Song Run-Through","session":"8/27/26 Lesson","chunks":[{"file":"chunk_46.mp3","duration":27.04,"start":602.93,"end":629.97,"src":"audio/chunk_46.mp3"},{"file":"chunk_47.mp3","duration":27.04,"start":629.97,"end":657.01,"src":"audio/chunk_47.mp3"},{"file":"chunk_48.mp3","duration":27.04,"start":657.01,"end":684.05,"src":"audio/chunk_48.mp3"},{"file":"chunk_49.mp3","duration":27.04,"start":684.05,"end":711.09,"src":"audio/chunk_49.mp3"}]},{"id":"g30","defaultTitle":"Face Caress & Straw Intro","session":"8/27/26 Lesson","chunks":[{"file":"chunk_50.mp3","duration":27.04,"start":711.09,"end":738.13,"src":"audio/chunk_50.mp3"},{"file":"chunk_51.mp3","duration":27.04,"start":738.13,"end":765.17,"src":"audio/chunk_51.mp3"},{"file":"chunk_52.mp3","duration":27.04,"start":765.17,"end":792.21,"src":"audio/chunk_52.mp3"},{"file":"chunk_53.mp3","duration":27.04,"start":792.21,"end":819.25,"src":"audio/chunk_53.mp3"}]},{"id":"g31","defaultTitle":"Straw Technique: Siren & Quack","session":"8/27/26 Lesson","chunks":[{"file":"chunk_54.mp3","duration":27.04,"start":819.25,"end":846.29,"src":"audio/chunk_54.mp3"},{"file":"chunk_55.mp3","duration":27.04,"start":846.29,"end":873.33,"src":"audio/chunk_55.mp3"},{"file":"chunk_56.mp3","duration":27.04,"start":873.33,"end":900.37,"src":"audio/chunk_56.mp3"},{"file":"chunk_57.mp3","duration":27.04,"start":900.37,"end":927.41,"src":"audio/chunk_57.mp3"},{"file":"chunk_58.mp3","duration":27.04,"start":927.41,"end":954.45,"src":"audio/chunk_58.mp3"}]},{"id":"g32","defaultTitle":"Sugary: Know Me Corrections","session":"8/27/26 Lesson","chunks":[{"file":"chunk_59.mp3","duration":27.04,"start":954.45,"end":981.49,"src":"audio/chunk_59.mp3"},{"file":"chunk_60.mp3","duration":27.04,"start":981.49,"end":1008.53,"src":"audio/chunk_60.mp3"},{"file":"chunk_61.mp3","duration":27.04,"start":1008.53,"end":1035.57,"src":"audio/chunk_61.mp3"},{"file":"chunk_62.mp3","duration":27.04,"start":1035.57,"end":1062.61,"src":"audio/chunk_62.mp3"}]},{"id":"g33","defaultTitle":"Sugary: Final Refinement","session":"8/27/26 Lesson","chunks":[{"file":"chunk_63.mp3","duration":27.04,"start":1062.61,"end":1089.65,"src":"audio/chunk_63.mp3"},{"file":"chunk_64.mp3","duration":27.04,"start":1089.65,"end":1116.69,"src":"audio/chunk_64.mp3"},{"file":"chunk_65.mp3","duration":27.04,"start":1116.69,"end":1143.73,"src":"audio/chunk_65.mp3"},{"file":"chunk_66.mp3","duration":25.05,"start":1143.73,"end":1168.78,"src":"audio/chunk_66.mp3"}]}];
+
+const GROUPS = [{"id": "g1", "defaultTitle": "Breathing & Vocal Warm-Up", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_01.mp3", "duration": 27.03, "start": 0.0, "end": 27.03, "src": "audio/chunk_01.mp3"}, {"file": "chunk_02.mp3", "duration": 24.62, "start": 27.03, "end": 51.65, "src": "audio/chunk_02.mp3"}, {"file": "chunk_03.mp3", "duration": 24.45, "start": 51.65, "end": 76.1, "src": "audio/chunk_03.mp3"}, {"file": "chunk_04.mp3", "duration": 24.52, "start": 76.1, "end": 100.62, "src": "audio/chunk_04.mp3"}]}, {"id": "g5", "defaultTitle": "Vocal Technique Work", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_05.mp3", "duration": 95.16, "start": 100.62, "end": 195.78, "src": "audio/chunk_05.mp3"}, {"file": "chunk_06.mp3", "duration": 28.51, "start": 195.78, "end": 224.29, "src": "audio/chunk_06.mp3"}, {"file": "chunk_07.mp3", "duration": 32.58, "start": 224.29, "end": 256.87, "src": "audio/chunk_07.mp3"}]}, {"id": "g8", "defaultTitle": "Vocal Cord Compression", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_08.mp3", "duration": 31.59, "start": 256.87, "end": 288.46, "src": "audio/chunk_08.mp3"}]}, {"id": "g9", "defaultTitle": "Finger Placement Cue", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_09.mp3", "duration": 26.85, "start": 288.46, "end": 315.31, "src": "audio/chunk_09.mp3"}, {"file": "chunk_10.mp3", "duration": 27.11, "start": 315.31, "end": 342.42, "src": "audio/chunk_10.mp3"}, {"file": "chunk_11.mp3", "duration": 35.34, "start": 342.42, "end": 377.76, "src": "audio/chunk_11.mp3"}]}, {"id": "g12", "defaultTitle": "Transition / Review", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_12.mp3", "duration": 28.98, "start": 377.76, "end": 406.74, "src": "audio/chunk_12.mp3"}]}, {"id": "g13", "defaultTitle": "Open Placement Discussion", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_13.mp3", "duration": 29.65, "start": 406.74, "end": 436.39, "src": "audio/chunk_13.mp3"}, {"file": "chunk_14.mp3", "duration": 27.14, "start": 436.39, "end": 463.53, "src": "audio/chunk_14.mp3"}]}, {"id": "g15", "defaultTitle": "Quack / Twang Resonance", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_15.mp3", "duration": 25.78, "start": 463.53, "end": 489.31, "src": "audio/chunk_15.mp3"}, {"file": "chunk_16.mp3", "duration": 25.23, "start": 489.31, "end": 514.54, "src": "audio/chunk_16.mp3"}]}, {"id": "g17", "defaultTitle": "Repeated Pattern Exercise", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_17.mp3", "duration": 27.7, "start": 514.54, "end": 542.24, "src": "audio/chunk_17.mp3"}, {"file": "chunk_18.mp3", "duration": 25.79, "start": 542.24, "end": 568.03, "src": "audio/chunk_18.mp3"}]}, {"id": "g19", "defaultTitle": "Wrap-Up: Number Count Recap", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_19.mp3", "duration": 24.74, "start": 568.03, "end": 592.77, "src": "audio/chunk_19.mp3"}, {"file": "chunk_20.mp3", "duration": 25.57, "start": 592.77, "end": 618.34, "src": "audio/chunk_20.mp3"}]}, {"id": "g21", "defaultTitle": "Closing / Sign-Off", "session": "8/14/26 Lesson", "chunks": [{"file": "chunk_21.mp3", "duration": 30.43, "start": 618.34, "end": 648.77, "src": "audio/chunk_21.mp3"}]}, {"id": "g22", "defaultTitle": "Follow-Up: Spot-Check & Technique Notes", "session": "Follow-Up \u00b7 8/23/26", "chunks": [{"file": "chunk_22.mp3", "duration": 147.67, "start": 0.0, "end": 147.67, "src": "audio/chunk_22.mp3"}]},{"id":"g23","defaultTitle":"Live Slip Slip Exercise","session":"8/27/26 Lesson","chunks":[{"file":"chunk_23.mp3","duration":27.04,"start":0.0,"end":27.04,"src":"audio/chunk_23.mp3"},{"file":"chunk_24.mp3","duration":27.04,"start":27.04,"end":54.08,"src":"audio/chunk_24.mp3"},{"file":"chunk_25.mp3","duration":27.04,"start":54.08,"end":81.12,"src":"audio/chunk_25.mp3"}]},{"id":"g24","defaultTitle":"Hum Resonance & Anchor Note","session":"8/27/26 Lesson","chunks":[{"file":"chunk_26.mp3","duration":27.04,"start":81.12,"end":108.16,"src":"audio/chunk_26.mp3"},{"file":"chunk_27.mp3","duration":27.04,"start":108.16,"end":135.2,"src":"audio/chunk_27.mp3"},{"file":"chunk_28.mp3","duration":27.04,"start":135.2,"end":162.24,"src":"audio/chunk_28.mp3"},{"file":"chunk_29.mp3","duration":27.04,"start":162.24,"end":189.28,"src":"audio/chunk_29.mp3"}]},{"id":"g25","defaultTitle":"Thick vs. Thin Vocal Folds","session":"8/27/26 Lesson","chunks":[{"file":"chunk_30.mp3","duration":27.04,"start":189.28,"end":216.32,"src":"audio/chunk_30.mp3"},{"file":"chunk_31.mp3","duration":27.04,"start":216.32,"end":243.36,"src":"audio/chunk_31.mp3"},{"file":"chunk_32.mp3","duration":27.04,"start":243.36,"end":270.4,"src":"audio/chunk_32.mp3"}]},{"id":"g26","defaultTitle":"Fold Flexing: Hey Everybody","session":"8/27/26 Lesson","chunks":[{"file":"chunk_33.mp3","duration":27.04,"start":270.4,"end":297.44,"src":"audio/chunk_33.mp3"},{"file":"chunk_34.mp3","duration":27.04,"start":297.44,"end":324.48,"src":"audio/chunk_34.mp3"},{"file":"chunk_35.mp3","duration":27.04,"start":324.48,"end":351.52,"src":"audio/chunk_35.mp3"},{"file":"chunk_36.mp3","duration":27.04,"start":351.52,"end":378.56,"src":"audio/chunk_36.mp3"},{"file":"chunk_37.mp3","duration":27.04,"start":378.56,"end":405.6,"src":"audio/chunk_37.mp3"}]},{"id":"g27","defaultTitle":"Sugary: Finding the Song","session":"8/27/26 Lesson","chunks":[{"file":"chunk_38.mp3","duration":27.04,"start":405.6,"end":432.64,"src":"audio/chunk_38.mp3"},{"file":"chunk_39.mp3","duration":27.04,"start":432.64,"end":459.68,"src":"audio/chunk_39.mp3"},{"file":"chunk_40.mp3","duration":27.04,"start":459.68,"end":486.72,"src":"audio/chunk_40.mp3"},{"file":"chunk_41.mp3","duration":27.04,"start":486.72,"end":513.76,"src":"audio/chunk_41.mp3"},{"file":"chunk_42.mp3","duration":27.04,"start":513.76,"end":540.8,"src":"audio/chunk_42.mp3"}]},{"id":"g28","defaultTitle":"Sugary: First Attempt","session":"8/27/26 Lesson","chunks":[{"file":"chunk_43.mp3","duration":27.04,"start":540.8,"end":567.84,"src":"audio/chunk_43.mp3"},{"file":"chunk_44.mp3","duration":27.04,"start":567.84,"end":594.88,"src":"audio/chunk_44.mp3"},{"file":"chunk_45.mp3","duration":8.05,"start":594.88,"end":602.93,"src":"audio/chunk_45.mp3"}]},{"id":"g29","defaultTitle":"Sugary: Song Run-Through","session":"8/27/26 Lesson","chunks":[{"file":"chunk_46.mp3","duration":27.04,"start":602.93,"end":629.97,"src":"audio/chunk_46.mp3"},{"file":"chunk_47.mp3","duration":27.04,"start":629.97,"end":657.01,"src":"audio/chunk_47.mp3"},{"file":"chunk_48.mp3","duration":27.04,"start":657.01,"end":684.05,"src":"audio/chunk_48.mp3"},{"file":"chunk_49.mp3","duration":27.04,"start":684.05,"end":711.09,"src":"audio/chunk_49.mp3"}]},{"id":"g30","defaultTitle":"Face Caress & Straw Intro","session":"8/27/26 Lesson","chunks":[{"file":"chunk_50.mp3","duration":27.04,"start":711.09,"end":738.13,"src":"audio/chunk_50.mp3"},{"file":"chunk_51.mp3","duration":27.04,"start":738.13,"end":765.17,"src":"audio/chunk_51.mp3"},{"file":"chunk_52.mp3","duration":27.04,"start":765.17,"end":792.21,"src":"audio/chunk_52.mp3"},{"file":"chunk_53.mp3","duration":27.04,"start":792.21,"end":819.25,"src":"audio/chunk_53.mp3"}]},{"id":"g31","defaultTitle":"Straw Technique: Siren & Quack","session":"8/27/26 Lesson","chunks":[{"file":"chunk_54.mp3","duration":27.04,"start":819.25,"end":846.29,"src":"audio/chunk_54.mp3"},{"file":"chunk_55.mp3","duration":27.04,"start":846.29,"end":873.33,"src":"audio/chunk_55.mp3"},{"file":"chunk_56.mp3","duration":27.04,"start":873.33,"end":900.37,"src":"audio/chunk_56.mp3"},{"file":"chunk_57.mp3","duration":27.04,"start":900.37,"end":927.41,"src":"audio/chunk_57.mp3"},{"file":"chunk_58.mp3","duration":27.04,"start":927.41,"end":954.45,"src":"audio/chunk_58.mp3"}]},{"id":"g32","defaultTitle":"Sugary: Know Me Corrections","session":"8/27/26 Lesson","chunks":[{"file":"chunk_59.mp3","duration":27.04,"start":954.45,"end":981.49,"src":"audio/chunk_59.mp3"},{"file":"chunk_60.mp3","duration":27.04,"start":981.49,"end":1008.53,"src":"audio/chunk_60.mp3"},{"file":"chunk_61.mp3","duration":27.04,"start":1008.53,"end":1035.57,"src":"audio/chunk_61.mp3"},{"file":"chunk_62.mp3","duration":27.04,"start":1035.57,"end":1062.61,"src":"audio/chunk_62.mp3"}]},{"id":"g33","defaultTitle":"Sugary: Final Refinement","session":"8/27/26 Lesson","chunks":[{"file":"chunk_63.mp3","duration":27.04,"start":1062.61,"end":1089.65,"src":"audio/chunk_63.mp3"},{"file":"chunk_64.mp3","duration":27.04,"start":1089.65,"end":1116.69,"src":"audio/chunk_64.mp3"},{"file":"chunk_65.mp3","duration":27.04,"start":1116.69,"end":1143.73,"src":"audio/chunk_65.mp3"},{"file":"chunk_66.mp3","duration":25.05,"start":1143.73,"end":1168.78,"src":"audio/chunk_66.mp3"}]},
+{"id":"v1","defaultTitle":"Recording 1","session":"9/17/26 Lesson","chunks":[{"file":"video_01.mov","duration":137.83,"start":0.0,"end":137.83,"src":"video/video_01.mov","type":"video"}]},
+{"id":"v2","defaultTitle":"Recording 2","session":"9/17/26 Lesson","chunks":[{"file":"video_02.mov","duration":193.62,"start":0.0,"end":193.62,"src":"video/video_02.mov","type":"video"}]},
+{"id":"v3","defaultTitle":"Recording 3","session":"9/17/26 Lesson","chunks":[{"file":"video_03.mov","duration":267.03,"start":0.0,"end":267.03,"src":"video/video_03.mov","type":"video"}]},
+{"id":"v4","defaultTitle":"Recording 4","session":"9/17/26 Lesson","chunks":[{"file":"video_04.mov","duration":505.71,"start":0.0,"end":505.71,"src":"video/video_04.mov","type":"video"}]}
+];
 
 const STORAGE_KEY = "rehearsal-marks-v1";
 function loadState() {
@@ -520,6 +578,18 @@ GROUPS.forEach((g, gi) => {
 
 let currentFlat = 0;
 const audio = document.getElementById("audio");
+const videoEl = document.getElementById("video");
+const videoPanel = document.getElementById("videoPanel");
+
+function getMedia() {
+  const f = flatParts[currentFlat];
+  return f && f.chunk.type === "video" ? videoEl : audio;
+}
+
+function pauseAll() {
+  if (!audio.paused) audio.pause();
+  if (!videoEl.paused) videoEl.pause();
+}
 
 function fmtTime(s) {
   if (!isFinite(s) || s < 0) s = 0;
@@ -547,6 +617,7 @@ function buildList() {
     }
 
     const totalDur = g.chunks.reduce((a, c) => a + c.duration, 0);
+    const isVideoGroup = g.chunks.some(c => c.type === "video");
     const el = document.createElement("div");
     el.className = "group";
     el.dataset.gi = gi;
@@ -554,12 +625,16 @@ function buildList() {
     const head = document.createElement("div");
     head.className = "group-head";
     const escTitle = groupTitle(gi).replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    const typeIcon = isVideoGroup
+      ? `<span class="video-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg> video</span>`
+      : "";
     head.innerHTML = `
       <span class="group-num">${String(gi + 1).padStart(2, "0")}</span>
       <div class="group-title-wrap">
         <div class="title-line">
           <span class="group-title-display" data-gi="${gi}">${escTitle}</span>
           <input class="group-title-input" data-gi="${gi}" value="${escTitle}" aria-label="Section title" style="display:none" />
+          ${typeIcon}
           <button class="title-edit-btn" data-gi="${gi}" aria-label="Rename section" title="Rename section">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
           </button>
@@ -662,30 +737,37 @@ function markPlayed(file) {
 function refreshNowPlaying() {
   const f = flatParts[currentFlat];
   const gi = f.groupIndex;
+  const isVideo = f.chunk.type === "video";
   document.getElementById("nowTitle").textContent = groupTitle(gi);
+  document.getElementById("videoBadge").style.display = isVideo ? "" : "none";
   const label = GROUPS[gi].chunks.length > 1 ? `Part ${f.partIndex + 1} of ${GROUPS[gi].chunks.length}` : "";
   document.getElementById("nowPart").textContent = label;
 }
 
 function loadAndPlay(flatIdx, autoplay = true) {
   if (flatIdx < 0 || flatIdx >= flatParts.length) return;
+  pauseAll();
   currentFlat = flatIdx;
   const c = flatParts[flatIdx].chunk;
-  audio.src = c.src;
-  audio.currentTime = 0;
+  const isVideo = c.type === "video";
+  const media = isVideo ? videoEl : audio;
+  media.src = c.src;
+  media.currentTime = 0;
+  videoPanel.classList.toggle("active", isVideo);
   refreshNowPlaying();
   setActiveRow();
   document.getElementById("btnPrev").disabled = flatIdx === 0;
   document.getElementById("btnNext").disabled = flatIdx === flatParts.length - 1;
-  if (autoplay) audio.play().catch(() => {});
+  if (autoplay) media.play().catch(() => {});
 }
 
 document.getElementById("btnPlay").addEventListener("click", () => {
-  if (!audio.src) { loadAndPlay(0); return; }
-  if (audio.paused) audio.play().catch(() => {}); else audio.pause();
+  const m = getMedia();
+  if (!m.src) { loadAndPlay(0); return; }
+  if (m.paused) m.play().catch(() => {}); else m.pause();
 });
-document.getElementById("btnRew").addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
-document.getElementById("btnFwd").addEventListener("click", () => { audio.currentTime = Math.min(audio.duration || 1e9, audio.currentTime + 10); });
+document.getElementById("btnRew").addEventListener("click", () => { const m = getMedia(); m.currentTime = Math.max(0, m.currentTime - 10); });
+document.getElementById("btnFwd").addEventListener("click", () => { const m = getMedia(); m.currentTime = Math.min(m.duration || 1e9, m.currentTime + 10); });
 document.getElementById("btnPrev").addEventListener("click", () => loadAndPlay(currentFlat - 1));
 document.getElementById("btnNext").addEventListener("click", () => loadAndPlay(currentFlat + 1));
 
@@ -693,45 +775,67 @@ const autoToggle = document.getElementById("autoToggle");
 function renderAutoToggle() { autoToggle.classList.toggle("on", !!state.autoAdvance); }
 autoToggle.addEventListener("click", () => { state.autoAdvance = !state.autoAdvance; saveState(); renderAutoToggle(); });
 
-audio.addEventListener("play", () => {
+function onPlay(e) {
+  if (e.target !== getMedia()) return;
   document.getElementById("iconPlay").style.display = "none";
   document.getElementById("iconPause").style.display = "";
   document.getElementById("btnPlay").setAttribute("aria-label", "Pause");
-});
-audio.addEventListener("pause", () => {
+}
+function onPause(e) {
+  if (e.target !== getMedia()) return;
   document.getElementById("iconPlay").style.display = "";
   document.getElementById("iconPause").style.display = "none";
   document.getElementById("btnPlay").setAttribute("aria-label", "Play");
-});
-audio.addEventListener("loadedmetadata", () => {
-  document.getElementById("timeTotal").textContent = fmtTime(audio.duration);
-});
-audio.addEventListener("timeupdate", () => {
-  const dur = audio.duration || flatParts[currentFlat].chunk.duration || 1;
-  const pct = Math.min(100, (audio.currentTime / dur) * 100);
+}
+function onLoadedMetadata(e) {
+  if (e.target !== getMedia()) return;
+  document.getElementById("timeTotal").textContent = fmtTime(e.target.duration);
+}
+function onTimeUpdate(e) {
+  if (e.target !== getMedia()) return;
+  const dur = e.target.duration || flatParts[currentFlat].chunk.duration || 1;
+  const pct = Math.min(100, (e.target.currentTime / dur) * 100);
   const seek = document.getElementById("seek");
   seek.value = Math.round(pct * 10);
   seek.style.setProperty("--pct", pct + "%");
-  document.getElementById("timeElapsed").textContent = fmtTime(audio.currentTime);
-});
-audio.addEventListener("ended", () => {
+  document.getElementById("timeElapsed").textContent = fmtTime(e.target.currentTime);
+}
+function onEnded(e) {
+  if (e.target !== getMedia()) return;
   markPlayed(flatParts[currentFlat].chunk.file);
   if (state.autoAdvance && currentFlat < flatParts.length - 1) {
     loadAndPlay(currentFlat + 1);
   }
+}
+
+[audio, videoEl].forEach(m => {
+  m.addEventListener("play", onPlay);
+  m.addEventListener("pause", onPause);
+  m.addEventListener("loadedmetadata", onLoadedMetadata);
+  m.addEventListener("timeupdate", onTimeUpdate);
+  m.addEventListener("ended", onEnded);
+});
+
+videoEl.addEventListener("error", () => {
+  if (videoEl.src) videoPanel.classList.add("unavailable");
+});
+videoEl.addEventListener("loadstart", () => {
+  videoPanel.classList.remove("unavailable");
 });
 
 const seek = document.getElementById("seek");
 seek.addEventListener("input", () => {
-  const dur = audio.duration || flatParts[currentFlat].chunk.duration || 1;
-  audio.currentTime = (seek.value / 1000) * dur;
+  const m = getMedia();
+  const dur = m.duration || flatParts[currentFlat].chunk.duration || 1;
+  m.currentTime = (seek.value / 1000) * dur;
 });
 
 document.addEventListener("keydown", (e) => {
   if (e.target.tagName === "INPUT") return;
+  const m = getMedia();
   if (e.code === "Space") { e.preventDefault(); document.getElementById("btnPlay").click(); }
-  else if (e.key === "ArrowLeft") { audio.currentTime = Math.max(0, audio.currentTime - 10); }
-  else if (e.key === "ArrowRight") { audio.currentTime = Math.min(audio.duration || 1e9, audio.currentTime + 10); }
+  else if (e.key === "ArrowLeft") { m.currentTime = Math.max(0, m.currentTime - 10); }
+  else if (e.key === "ArrowRight") { m.currentTime = Math.min(m.duration || 1e9, m.currentTime + 10); }
   else if (e.key === "[") { loadAndPlay(currentFlat - 1); }
   else if (e.key === "]") { loadAndPlay(currentFlat + 1); }
 });
@@ -758,6 +862,15 @@ if (window.navigator.standalone || window.matchMedia("(display-mode: standalone)
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });
+}
+
+// Keep body padding in sync with player height
+const player = document.querySelector(".player");
+if ("ResizeObserver" in window) {
+  new ResizeObserver(entries => {
+    const h = entries[0].contentRect.height;
+    document.body.style.paddingBottom = (h + 16) + "px";
+  }).observe(player);
 }
 
 </script>

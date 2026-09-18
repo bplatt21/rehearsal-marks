@@ -1,0 +1,4 @@
+# Videos are hosted on Vercel Blob — too large for deployment bundle
+video/
+.gstack/
+.vercel
