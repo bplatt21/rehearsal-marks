@@ -862,7 +862,24 @@ if (window.navigator.standalone || window.matchMedia("(display-mode: standalone)
 }
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });
+  // Reload once when a new service worker takes control, so updated
+  // lessons show on first reopen instead of needing a second launch.
+  let reloadingForSW = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloadingForSW) return;
+    reloadingForSW = true;
+    window.location.reload();
+  });
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").then((reg) => {
+      // Check for a new worker now and whenever the app is brought back
+      // to the foreground (iOS standalone PWAs check lazily otherwise).
+      reg.update().catch(() => {});
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") reg.update().catch(() => {});
+      });
+    }).catch(() => {});
+  });
 }
 
 // Keep body padding in sync with player height
